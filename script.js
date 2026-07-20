@@ -1,8 +1,8 @@
 // ==========================================
-// CONFIGURATION (သင့်ဖုန်းနံပါတ်နှင့် Telegram ပြောင်းရန်)
+// CONFIGURATION
 // ==========================================
 const MY_PHONE_NUMBER = "959123456789"; // 959 လိုင်းဖြင့် စတင်သော သင့်ဖုန်းနံပါတ် (Viber / WhatsApp အတွက်)
-const TELEGRAM_USERNAME = "Ngapyinn"; // @ မပါဘဲ ထည့်ပါ
+const TELEGRAM_USERNAME = "Ngapyinn";  // @ မပါဘဲ ထည့်ပါ
 
 // ==========================================
 // STATE MANAGEMENT & DOM ELEMENTS
@@ -72,13 +72,13 @@ function setupEventListeners() {
 // CART DRAWER FUNCTIONS
 // ==========================================
 function openCart() {
-    cartDrawer.classList.add('open');
-    cartOverlay.classList.add('active');
+    if (cartDrawer) cartDrawer.classList.add('open');
+    if (cartOverlay) cartOverlay.classList.add('active');
 }
 
 function closeCart() {
-    cartDrawer.classList.remove('open');
-    cartOverlay.classList.remove('active');
+    if (cartDrawer) cartDrawer.classList.remove('open');
+    if (cartOverlay) cartOverlay.classList.remove('active');
 }
 
 function handleAddToCart(e) {
@@ -163,13 +163,13 @@ function updateCartUI() {
 // CHECKOUT & ORDER SENDING FUNCTIONS
 // ==========================================
 function openCheckoutModal() {
-    checkoutModal.classList.add('active');
-    checkoutOverlay.classList.add('active');
+    if (checkoutModal) checkoutModal.classList.add('active');
+    if (checkoutOverlay) checkoutOverlay.classList.add('active');
 }
 
 function closeCheckoutModal() {
-    checkoutModal.classList.remove('active');
-    checkoutOverlay.classList.remove('active');
+    if (checkoutModal) checkoutModal.classList.remove('active');
+    if (checkoutOverlay) checkoutOverlay.classList.remove('active');
 }
 
 function handleCheckoutSubmit(e) {
@@ -199,9 +199,10 @@ function handleCheckoutSubmit(e) {
     const encodedText = encodeURIComponent(orderText);
 
     if (channel === 'whatsapp') {
-        window.open(`https://wa.me/${MY_PHONE_NUMBER}?text=${encodedText}`, '_blank');
+        window.open(`https://api.whatsapp.com/send?phone=${MY_PHONE_NUMBER}&text=${encodedText}`, '_blank');
     } else if (channel === 'telegram') {
-        window.open(`https://t.me/${TELEGRAM_USERNAME}?text=${encodedText}`, '_blank');
+        // Telegram Share URL ကို သုံးထားသဖြင့် စာသားအဆင်သင့် ပါသွားပါမည်
+        window.open(`https://t.me/share/url?url=&text=${encodedText}`, '_blank');
     } else if (channel === 'viber') {
         window.open(`viber://chat?number=+${MY_PHONE_NUMBER}`, '_blank');
     }
