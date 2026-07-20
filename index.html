@@ -34,7 +34,7 @@
             </nav>
 
             <div class="header-icons">
-                <a href="#"><i class="fa-solid class="fa-magnifying-glass"></i></a>
+                <a href="#"><i class="fa-solid fa-magnifying-glass"></i></a>
                 <a href="#"><i class="fa-regular fa-user"></i></a>
                 <a href="#" class="cart-icon"><i class="fa-solid fa-bag-shopping"></i><span class="badge">0</span></a>
             </div>
@@ -162,7 +162,7 @@
         </div>
     </footer>
 
-<!-- Slide-over Cart Drawer -->
+    <!-- Slide-over Cart Drawer -->
     <div class="cart-overlay" id="cartOverlay"></div>
     <div class="cart-drawer" id="cartDrawer">
         <div class="cart-header">
@@ -171,7 +171,6 @@
         </div>
         
         <div class="cart-items" id="cartItemsContainer">
-            <!-- JavaScript မှတစ်ဆင့် Dynamic ထည့်ပေးသွားမည့်နေရာ -->
             <p class="empty-cart-msg">Your cart is currently empty.</p>
         </div>
 
@@ -184,11 +183,7 @@
         </div>
     </div>
 
-    <!-- JavaScript File Link -->
-    <script src="script.js"></script>
-</body>
-</html>
-<!-- Checkout Modal (Customer Information) -->
+    <!-- Checkout Modal (Customer Information) -->
     <div class="cart-overlay" id="checkoutOverlay"></div>
     <div class="checkout-modal" id="checkoutModal">
         <div class="checkout-header">
@@ -211,13 +206,16 @@
             <div class="form-group">
                 <label>Order ပို့ဆောင်လိုသည့် Channel ကို ရွေးပါ</label>
                 <select id="orderChannel">
+                    <option value="telegram">Telegram (@Ngapyinn)</option>
                     <option value="viber">Viber</option>
-                    <option value="telegram">Telegram</option>
                     <option value="whatsapp">WhatsApp</option>
                 </select>
             </div>
             <button type="submit" class="send-order-btn">Order တင်မည်</button>
         </form>
     </div>
+
+    <!-- JavaScript File Link -->
+    <script src="script.js"></script>
 </body>
 </html>
