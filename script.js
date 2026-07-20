@@ -1,7 +1,14 @@
-// State Management: Cart ထဲက ပစ္စည်းများကို သိမ်းဆည်းရန် Array
+// ==========================================
+// CONFIGURATION (သင့်ဖုန်းနံပါတ်နှင့် Telegram ပြောင်းရန်)
+// ==========================================
+const MY_PHONE_NUMBER = "959123456789"; // 959 လိုင်းဖြင့် စတင်သော သင့်ဖုန်းနံပါတ် (Viber / WhatsApp အတွက်)
+const TELEGRAM_USERNAME = "Ngapyinn"; // @ မပါဘဲ ထည့်ပါ
+
+// ==========================================
+// STATE MANAGEMENT & DOM ELEMENTS
+// ==========================================
 let cart = JSON.parse(localStorage.getItem('fragrance_cart')) || [];
 
-// DOM Elements များကို ဆွဲယူခြင်း
 const cartIcon = document.querySelector('.cart-icon');
 const cartDrawer = document.getElementById('cartDrawer');
 const cartOverlay = document.getElementById('cartOverlay');
@@ -11,7 +18,16 @@ const cartSubtotal = document.getElementById('cartSubtotal');
 const cartBadge = document.querySelector('.cart-icon .badge');
 const cartCountHeader = document.getElementById('cartCountHeader');
 
-// App စတင်ချိန်တွင် Cart ကို Render လုပ်ပါ
+// Checkout Modal Elements
+const checkoutBtn = document.querySelector('.checkout-btn');
+const checkoutModal = document.getElementById('checkoutModal');
+const checkoutOverlay = document.getElementById('checkoutOverlay');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const checkoutForm = document.getElementById('checkoutForm');
+
+// ==========================================
+// INITIALIZATION & EVENT LISTENERS
+// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
     updateCartUI();
     setupEventListeners();
@@ -19,22 +35,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function setupEventListeners() {
     // Cart Drawer ဖွင့်/ပိတ် Events
-    cartIcon.addEventListener('click', (e) => {
-        e.preventDefault();
-        openCart();
-    });
+    if (cartIcon) {
+        cartIcon.addEventListener('click', (e) => {
+            e.preventDefault();
+            openCart();
+        });
+    }
 
-    closeCartBtn.addEventListener('click', closeCart);
-    cartOverlay.addEventListener('click', closeCart);
+    if (closeCartBtn) closeCartBtn.addEventListener('click', closeCart);
+    if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
 
     // "Add to Cart" Button များအားလုံးအတွက် Click Event တပ်ဆင်ခြင်း
     const addToCartBtns = document.querySelectorAll('.add-to-cart-btn');
     addToCartBtns.forEach((btn) => {
         btn.addEventListener('click', handleAddToCart);
     });
+
+    // Checkout Events
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+            if (cart.length === 0) {
+                alert("သင့် Cart ထဲတွင် ပစ္စည်းမရှိသေးပါ။");
+                return;
+            }
+            closeCart();
+            openCheckoutModal();
+        });
+    }
+
+    if (closeModalBtn) closeModalBtn.addEventListener('click', closeCheckoutModal);
+    if (checkoutOverlay) checkoutOverlay.addEventListener('click', closeCheckoutModal);
+    if (checkoutForm) checkoutForm.addEventListener('submit', handleCheckoutSubmit);
 }
 
-// Open / Close Cart Functions
+// ==========================================
+// CART DRAWER FUNCTIONS
+// ==========================================
 function openCart() {
     cartDrawer.classList.add('open');
     cartOverlay.classList.add('active');
@@ -45,17 +81,14 @@ function closeCart() {
     cartOverlay.classList.remove('active');
 }
 
-// Product ကို Cart ထဲ ထည့်သွင်းခြင်း
 function handleAddToCart(e) {
     const card = e.target.closest('.product-card');
     
-    // Product Data ဆွဲယူခြင်း
     const title = card.querySelector('.product-title').innerText;
     const priceText = card.querySelector('.current-price').innerText;
-    const price = parseInt(priceText.replace(/[^0-9]/g, '')); // Number သီးသန့်ပြောင်းခြင်း
+    const price = parseInt(priceText.replace(/[^0-9]/g, '')); 
     const imageSrc = card.querySelector('img').src;
 
-    // အရင်ရှိပြီးသား ပစ္စည်းဖြစ်ပါက Quantity ကိုပဲ တိုးမည်
     const existingIndex = cart.findIndex(item => item.title === title);
 
     if (existingIndex > -1) {
@@ -70,16 +103,15 @@ function handleAddToCart(e) {
     }
 
     saveAndRender();
-    openCart(); // ပစ္စည်းထည့်ပြီးလျှင် Cart Drawer ကို တန်းဖွင့်ပြမည်
+    openCart(); 
 }
 
-// Quantity တိုး/လျော့ သို့မဟုတ် ပစ္စည်းဖျက်ခြင်း
 function changeQuantity(title, change) {
     const index = cart.findIndex(item => item.title === title);
     if (index > -1) {
         cart[index].quantity += change;
         if (cart[index].quantity <= 0) {
-            cart.splice(index, 1); // Quantity 0 ဖြစ်သွားလျှင် ဖျက်မည်
+            cart.splice(index, 1); 
         }
     }
     saveAndRender();
@@ -90,24 +122,21 @@ function removeFromCart(title) {
     saveAndRender();
 }
 
-// LocalStorage ထဲ သိမ်းဆည်းပြီး UI ကို အမြဲတမ်း Update လုပ်ပေးခြင်း
 function saveAndRender() {
     localStorage.setItem('fragrance_cart', JSON.stringify(cart));
     updateCartUI();
 }
 
-// UI Rendering Engine
 function updateCartUI() {
-    // ၁။ Cart Badge & Header Count ကို Update လုပ်ခြင်း
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-    cartBadge.innerText = totalItems;
-    cartCountHeader.innerText = totalItems;
+    if (cartBadge) cartBadge.innerText = totalItems;
+    if (cartCountHeader) cartCountHeader.innerText = totalItems;
 
-    // ၂။ Subtotal တွက်ချက်ခြင်း
     const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    cartSubtotal.innerText = totalAmount.toLocaleString() + ' MMK';
+    if (cartSubtotal) cartSubtotal.innerText = totalAmount.toLocaleString() + ' MMK';
 
-    // ၃။ Cart Items List ကို Render လုပ်ခြင်း
+    if (!cartItemsContainer) return;
+
     if (cart.length === 0) {
         cartItemsContainer.innerHTML = '<p class="empty-cart-msg">Your cart is currently empty.</p>';
         return;
@@ -128,4 +157,56 @@ function updateCartUI() {
             </div>
         </div>
     `).join('');
+}
+
+// ==========================================
+// CHECKOUT & ORDER SENDING FUNCTIONS
+// ==========================================
+function openCheckoutModal() {
+    checkoutModal.classList.add('active');
+    checkoutOverlay.classList.add('active');
+}
+
+function closeCheckoutModal() {
+    checkoutModal.classList.remove('active');
+    checkoutOverlay.classList.remove('active');
+}
+
+function handleCheckoutSubmit(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('custName').value;
+    const phone = document.getElementById('custPhone').value;
+    const address = document.getElementById('custAddress').value;
+    const channel = document.getElementById('orderChannel').value;
+
+    let orderText = `🛒 *NEW PERFUME ORDER*\n`;
+    orderText += `---------------------------\n`;
+    orderText += `👤 *Customer:* ${name}\n`;
+    orderText += `📞 *Phone:* ${phone}\n`;
+    orderText += `🏠 *Address:* ${address}\n`;
+    orderText += `---------------------------\n`;
+    orderText += `🛍️ *Order Items:*\n`;
+
+    cart.forEach((item, index) => {
+        orderText += `${index + 1}. ${item.title} x ${item.quantity} = ${(item.price * item.quantity).toLocaleString()} MMK\n`;
+    });
+
+    const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    orderText += `---------------------------\n`;
+    orderText += `💰 *Total Amount:* ${totalAmount.toLocaleString()} MMK\n`;
+
+    const encodedText = encodeURIComponent(orderText);
+
+    if (channel === 'whatsapp') {
+        window.open(`https://wa.me/${MY_PHONE_NUMBER}?text=${encodedText}`, '_blank');
+    } else if (channel === 'telegram') {
+        window.open(`https://t.me/${TELEGRAM_USERNAME}?text=${encodedText}`, '_blank');
+    } else if (channel === 'viber') {
+        window.open(`viber://chat?number=+${MY_PHONE_NUMBER}`, '_blank');
+    }
+
+    cart = [];
+    saveAndRender();
+    closeCheckoutModal();
 }
