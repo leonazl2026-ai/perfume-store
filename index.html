@@ -188,6 +188,36 @@
     <script src="script.js"></script>
 </body>
 </html>
-
+<!-- Checkout Modal (Customer Information) -->
+    <div class="cart-overlay" id="checkoutOverlay"></div>
+    <div class="checkout-modal" id="checkoutModal">
+        <div class="checkout-header">
+            <h3>Delivery & Order Details</h3>
+            <button class="close-modal-btn" id="closeModalBtn">&times;</button>
+        </div>
+        <form id="checkoutForm" class="checkout-body">
+            <div class="form-group">
+                <label>အမည် (Name)</label>
+                <input type="text" id="custName" placeholder="မောင်မောင်" required>
+            </div>
+            <div class="form-group">
+                <label>ဖုန်းနံပါတ် (Phone Number)</label>
+                <input type="tel" id="custPhone" placeholder="09xxxxxxxxx" required>
+            </div>
+            <div class="form-group">
+                <label>ပို့ဆောင်ရမည့် လိပ်စာ (Delivery Address)</label>
+                <textarea id="custAddress" rows="2" placeholder="မြို့နယ်၊ လမ်း၊ အိမ်နံပါတ်" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Order ပို့ဆောင်လိုသည့် Channel ကို ရွေးပါ</label>
+                <select id="orderChannel">
+                    <option value="viber">Viber</option>
+                    <option value="telegram">Telegram</option>
+                    <option value="whatsapp">WhatsApp</option>
+                </select>
+            </div>
+            <button type="submit" class="send-order-btn">Order တင်မည်</button>
+        </form>
+    </div>
 </body>
 </html>
